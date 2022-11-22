@@ -136,3 +136,39 @@ WHERE dea.continent is not null
 SELECT *
 FROM PercentPopulationVaccinated
 ORDER BY location
+
+--1.
+
+Select SUM(new_cases) AS total_cases, SUM(new_deaths) AS total_deaths, SUM(new_deaths)/SUM(new_cases)*100 AS DeathPercentage
+FROM covid_portfolio..covid_deaths
+--WHERE location LIKE '%states%'
+WHERE continent is not null
+--GROUP BY date
+order by 1,2
+
+--2. We take these out as they are not included in the above queriers and want to stay consistent.
+
+SELECT location, SUM(new_deaths) AS TotalDeathCount
+FROM covid_portfolio..covid_deaths
+WHERE continent is null
+	AND location not in ('World', 'European Union','International')
+GROUP By location
+Order By TotalDeathCount desc
+
+--3.
+
+Select location, population,MAX(total_cases) AS HighestInfectionCount, MAX((total_cases/population))*100 AS 
+	PercentagePopulationInfected
+FROM covid_portfolio..covid_deaths
+--WHERE location LIKE '%states%'
+GROUP by location, population
+order by PercentagePopulationInfected desc
+
+--4.
+
+Select location, population,date, MAX(total_cases) AS HighestInfectionCount, MAX((total_cases/population))*100 AS 
+	PercentagePopulationInfected
+FROM covid_portfolio..covid_deaths
+--WHERE location LIKE '%states%'
+GROUP by location, population, date
+order by PercentagePopulationInfected desc
